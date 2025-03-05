@@ -1,0 +1,37 @@
+.menu {
+  background: white;
+  border-bottom: 1px solid #ddd;
+  padding: 15px 0;
+}
+
+.menu-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.menu-logo h1 {
+  margin: 0;
+  font-size: 24px;
+}
+
+.menu-links {
+  display: flex;
+  gap: 20px;
+}
+
+.menu-links a {
+  text-decoration: none;
+  color: #333;
+}
+
+.menu-links a:hover {
+  color: #666;
+}
+
+.menu-links a.active {
+  font-weight: bold;
+}

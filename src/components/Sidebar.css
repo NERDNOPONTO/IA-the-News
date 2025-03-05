@@ -1,0 +1,145 @@
+aside {
+  width: 200px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: white;
+  transition: all 0.3s ease;
+  position: sticky;
+  top: 100px;
+  height: fit-content;
+}
+
+aside:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  transform: translateY(-2px);
+}
+
+aside > div {
+  margin-bottom: 15px;
+}
+
+aside > div:last-child {
+  margin-bottom: 0;
+}
+
+input {
+  width: 100%;
+  padding: 5px;
+  border: 1px solid #ddd;
+}
+
+h3 {
+  margin: 0 0 10px 0;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+div > div {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+button {
+  display: block;
+  width: 100%;
+  padding: 5px;
+  text-align: left;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #eee;
+}
+
+.search-box {
+  margin-bottom: 1.5rem;
+  position: relative;
+}
+
+.search-box input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+.search-box input:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.categories {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 15px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.categories h3 {
+  margin: 0 0 15px 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #1f2937;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.categories-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 300px;
+  overflow-y: auto;
+  padding-right: 5px;
+}
+
+.categories-list::-webkit-scrollbar {
+  width: 5px;
+}
+
+.categories-list::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 5px;
+}
+
+.categories-list::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 5px;
+}
+
+.categories button {
+  width: 100%;
+  padding: 10px 12px;
+  border: none;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  font-size: 0.95rem;
+  color: #4b5563;
+}
+
+.categories button:hover {
+  background: #f3f4f6;
+  color: #2563eb;
+  transform: translateX(5px);
+}
+
+.categories button.active {
+  background: #2563eb;
+  color: white;
+  font-weight: 500;
+}
+
+.categories button.active:hover {
+  background: #1d4ed8;
+  transform: translateX(5px);
+} 

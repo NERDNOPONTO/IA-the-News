@@ -1,0 +1,326 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: #f5f5f5;
+  color: #333;
+  line-height: 1.5;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+/* Estilos do Post */
+.post {
+  background: white;
+  border: 1px solid #e5e7eb;
+  padding: 30px;
+  border-radius: 12px;
+  margin-bottom: 30px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  animation: fadeInUp 0.8s ease-out;
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+}
+
+.post::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%);
+  animation: shine 3s infinite;
+  opacity: 0.5;
+}
+
+.post::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.post:hover::after {
+  opacity: 1;
+}
+
+@keyframes shine {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.post:hover {
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  transform: translateY(-2px);
+}
+
+.post-header {
+  margin-bottom: 12.5px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #f3f4f6;
+}
+
+.post-header h2 {
+  margin: 0 0 7px 0;
+  font-size: 28px;
+  color: #1f2937;
+  line-height: 1.3;
+  font-weight: 700;
+  transition: all 0.3s ease;
+  position: relative;
+  display: inline-block;
+}
+
+.post-header h2::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #2563eb, #1d4ed8);
+  transition: width 0.3s ease;
+}
+
+.post:hover .post-header h2::after {
+  width: 100%;
+}
+
+.post-date {
+  font-size: 14px;
+  color: #6b7280;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: color 0.3s ease;
+}
+
+.post:hover .post-date {
+  color: #4b5563;
+}
+
+.post-date::before {
+  content: '';
+  display: inline-block;
+  width: 4px;
+  height: 4px;
+  background: #6b7280;
+  border-radius: 50%;
+  transition: background-color 0.3s ease;
+}
+
+.post:hover .post-date::before {
+  background: #2563eb;
+}
+
+.post-content {
+  line-height: 1.8;
+  color: #374151;
+  font-size: 16px;
+}
+
+.post-content p {
+  margin-bottom: 1.5em;
+  text-align: justify;
+  transition: opacity 0.3s ease;
+}
+
+.post:hover .post-content p {
+  opacity: 0.9;
+}
+
+.post-content p:last-child {
+  margin-bottom: 0;
+}
+
+.read-more-button {
+  background: #f3f4f6;
+  border: none;
+  color: #283249;
+  cursor: pointer;
+  padding: 7px 12px;
+  margin-top: 2px;
+  font-weight: 500;
+  font-size: 15px;
+  transition: all 0.3s ease;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(37, 99, 235, 0.1);
+}
+
+.read-more-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(45deg, #2f57adb4, #0044ff7e);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  color: white;
+  z-index: 0;
+}
+
+.read-more-button span {
+  position: relative;
+  z-index: 1;
+  font-weight: 600;
+}
+
+.read-more-button::after {
+  content: '→';
+  position: relative;
+  z-index: 1;
+  transition: transform 0.3s ease;
+  font-weight: bold;
+}
+
+
+
+.read-more-button:hover::before {
+  opacity: 1;
+}
+
+.read-more-button:hover::after {
+  transform: translateX(4px);
+}
+
+/* Estilos dos Botões de Compartilhamento */
+.share-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+/* Estilos do Botão Telegram */
+.telegram-notification-button {
+  background: #0088cc;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 136, 204, 0.2);
+}
+
+.telegram-notification-button:hover:not(:disabled) {
+  background: #006699;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 136, 204, 0.3);
+}
+
+.telegram-notification-button:disabled {
+  background: #cccccc;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.telegram-icon {
+  width: 20px;
+  height: 20px;
+}
+
+.telegram-notification-button span {
+  font-size: 14px;
+}
+
+/* Estilos para Áreas de Anúncios */
+.ad-space {
+  width: 100%;
+  margin: 20px 0;
+  position: relative;
+  background: #f8fafc;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.ad-space-top {
+  margin-top: 0;
+}
+
+.ad-space-middle {
+  margin: 30px 0;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+}
+
+.ad-container {
+  min-height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 15px;
+}
+
+.ad-label {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background: rgba(0,0,0,0.1);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  color: #666;
+}
+
+/* Responsividade para anúncios */
+@media (min-width: 768px) {
+  .ad-container {
+    min-height: 150px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .ad-container {
+    min-height: 200px;
+  }
+}
+
+/* Estilo para quando não há anúncios carregados */
+.ad-container:empty::before {
+  content: 'Área de Anúncio';
+  color: #94a3b8;
+  font-size: 14px;
+} 
