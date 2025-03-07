@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import React, { useState, useEffect, useCallback } from 'react';
+import { BrowserRouter as Router } from 'react-router-dom';
 import api from './services/api';
 import './App.css';
 import Header from './components/Header';
@@ -16,7 +16,6 @@ function App() {
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [searchQuery, setSearchQuery] = useState('');
   const [isConnected, setIsConnected] = useState(false);
 
   const checkServerConnection = async () => {
@@ -32,7 +31,7 @@ function App() {
     }
   };
 
-  const fetchPosts = async (page = 1) => {
+  const fetchPosts = useCallback(async (page = 1) => {
     try {
       setLoading(true);
       setError(null);
@@ -58,7 +57,7 @@ function App() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [isConnected]);
 
   useEffect(() => {
     console.log('Iniciando aplicação...');
@@ -80,10 +79,9 @@ function App() {
     return () => {
       telegramAutoNotification.stopChecking();
     };
-  }, []);
+  }, [fetchPosts]);
 
-  const handleSearch = (query) => {
-    setSearchQuery(query);
+  const handleSearch = () => {
     setCurrentPage(1);
   };
 
