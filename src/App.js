@@ -99,7 +99,7 @@ function App() {
   }
 
   return (
-    <Router basename={window.basename}>
+    <Router>
       <div className="App">
         <Header onSearch={handleSearch} />
         <main className="main-content">
