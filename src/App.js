@@ -10,7 +10,9 @@ import { telegramAutoNotification } from './services/TelegramAutoNotification';
 
 // Configuração do axios
 const api = axios.create({
-  baseURL: 'http://localhost:5000',
+  baseURL: process.env.NODE_ENV === 'production' 
+    ? 'https://blogbackend-4nz9.onrender.com/'  // Substitua pelo seu domínio no Render
+    : 'http://localhost:5000',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
