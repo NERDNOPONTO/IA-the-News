@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import api from './services/api';
 import './App.css';
 import Header from './components/Header';
@@ -100,33 +101,35 @@ function App() {
   }
 
   return (
-    <div className="App">
-      <Header onSearch={handleSearch} />
-      <main className="main-content">
-        <div className="content-wrapper">
-          <AdSpace position="top" />
-          {error ? (
-            <div className="error-container">
-              <p className="error-message">{error}</p>
-              <button onClick={() => fetchPosts(currentPage)} className="retry-button">
-                Tentar Novamente
-              </button>
-            </div>
-          ) : (
-            <>
-              <PostList 
-                posts={posts} 
-                currentPage={currentPage} 
-                totalPages={totalPages} 
-                onPageChange={handlePageChange}
-              />
-              <AdSpace />
-            </>
-          )}
-        </div>
-      </main>
-      <Footer />
-    </div>
+    <Router basename={window.basename}>
+      <div className="App">
+        <Header onSearch={handleSearch} />
+        <main className="main-content">
+          <div className="content-wrapper">
+            <AdSpace position="top" />
+            {error ? (
+              <div className="error-container">
+                <p className="error-message">{error}</p>
+                <button onClick={() => fetchPosts(currentPage)} className="retry-button">
+                  Tentar Novamente
+                </button>
+              </div>
+            ) : (
+              <>
+                <PostList 
+                  posts={posts} 
+                  currentPage={currentPage} 
+                  totalPages={totalPages} 
+                  onPageChange={handlePageChange}
+                />
+                <AdSpace />
+              </>
+            )}
+          </div>
+        </main>
+        <Footer />
+      </div>
+    </Router>
   );
 }
 
