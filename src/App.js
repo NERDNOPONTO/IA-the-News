@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
 import api from './services/api';
 import './App.css';
 import Header from './components/Header';
@@ -12,7 +12,7 @@ import Sobre from './pages/Sobre';
 import Categorias from './pages/Categorias';
 import Contato from './pages/Contato';
 
-function App() {
+function AppContent() {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -20,6 +20,7 @@ function App() {
   const [totalPages, setTotalPages] = useState(1);
   const [isConnected, setIsConnected] = useState(false);
   const [initialLoad, setInitialLoad] = useState(true);
+  const location = useLocation();
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -61,10 +62,12 @@ function App() {
       setPosts(response.posts);
       setTotalPages(response.pagination.pages);
       setCurrentPage(page);
+      return response.posts;
     } catch (err) {
       console.error('Erro ao buscar posts:', err);
       setError(err.message || 'Erro ao carregar posts. Por favor, tente novamente.');
       setPosts([]);
+      return [];
     } finally {
       setLoading(false);
     }
@@ -78,7 +81,7 @@ function App() {
       try {
         await checkServerConnection();
         await fetchPosts();
-        telegramAutoNotification.startChecking();
+        telegramAutoNotification.startChecking(fetchPosts);
       } catch (err) {
         console.error('Erro ao inicializar aplicação:', err);
         setError('Erro ao inicializar a aplicação. Por favor, tente novamente.');
@@ -105,49 +108,55 @@ function App() {
   }
 
   return (
+    <div className="App">
+      <Header onSearch={handleSearch} />
+      <nav className="main-nav">
+        <ul>
+          <li><Link to="/">Home</Link></li>
+          <li><Link to="/sobre">Sobre</Link></li>
+          <li><Link to="/categorias">Categorias</Link></li>
+          <li><Link to="/contato">Contato</Link></li>
+        </ul>
+      </nav>
+      <main className="main-content">
+        <div className="content-wrapper">
+          <AdSpace position="top" />
+          <Routes location={location}>
+            <Route path="/" element={
+              error ? (
+                <div className="error-container">
+                  <p className="error-message">{error}</p>
+                  <button onClick={() => fetchPosts(currentPage)} className="retry-button">
+                    Tentar Novamente
+                  </button>
+                </div>
+              ) : (
+                <>
+                  <PostList 
+                    posts={posts} 
+                    currentPage={currentPage} 
+                    totalPages={totalPages} 
+                    onPageChange={handlePageChange}
+                  />
+                  <AdSpace />
+                </>
+              )
+            } />
+            <Route path="/sobre" element={<Sobre />} />
+            <Route path="/categorias" element={<Categorias />} />
+            <Route path="/contato" element={<Contato />} />
+          </Routes>
+        </div>
+      </main>
+      <Footer />
+    </div>
+  );
+}
+
+function App() {
+  return (
     <Router basename="/IA-the-News">
-      <div className="App">
-        <Header onSearch={handleSearch} />
-        <nav className="main-nav">
-          <ul>
-            <li><Link to="/">Home</Link></li>
-            <li><Link to="/sobre">Sobre</Link></li>
-            <li><Link to="/categorias">Categorias</Link></li>
-            <li><Link to="/contato">Contato</Link></li>
-          </ul>
-        </nav>
-        <main className="main-content">
-          <div className="content-wrapper">
-            <AdSpace position="top" />
-            <Routes>
-              <Route path="/" element={
-                error ? (
-                  <div className="error-container">
-                    <p className="error-message">{error}</p>
-                    <button onClick={() => fetchPosts(currentPage)} className="retry-button">
-                      Tentar Novamente
-                    </button>
-                  </div>
-                ) : (
-                  <>
-                    <PostList 
-                      posts={posts} 
-                      currentPage={currentPage} 
-                      totalPages={totalPages} 
-                      onPageChange={handlePageChange}
-                    />
-                    <AdSpace />
-                  </>
-                )
-              } />
-              <Route path="/sobre" element={<Sobre />} />
-              <Route path="/categorias" element={<Categorias />} />
-              <Route path="/contato" element={<Contato />} />
-            </Routes>
-          </div>
-        </main>
-        <Footer />
-      </div>
+      <AppContent />
     </Router>
   );
 }
