@@ -5,7 +5,6 @@ import './App.css';
 import Header from './components/Header';
 import PostList from './components/PostList';
 import Footer from './components/Footer';
-import LoadingSpinner from './components/LoadingSpinner';
 import AdSpace from './components/AdSpace';
 import { telegramAutoNotification } from './services/TelegramAutoNotification';
 import { getPosts } from './services/api';
@@ -17,6 +16,15 @@ function App() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [isConnected, setIsConnected] = useState(false);
+  const [initialLoad, setInitialLoad] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setInitialLoad(false);
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   const checkServerConnection = async () => {
     try {
@@ -89,13 +97,8 @@ function App() {
     fetchPosts(page);
   };
 
-  if (loading) {
-    return (
-      <div className="loading-container">
-        <div className="loading-spinner"></div>
-        <p>Carregando posts...</p>
-      </div>
-    );
+  if (initialLoad || loading) {
+    return null;
   }
 
   return (
