@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from './services/api';
 import './App.css';
 import Header from './components/Header';
 import PostList from './components/PostList';
@@ -7,35 +7,7 @@ import Footer from './components/Footer';
 import LoadingSpinner from './components/LoadingSpinner';
 import AdSpace from './components/AdSpace';
 import { telegramAutoNotification } from './services/TelegramAutoNotification';
-
-// Configuração do axios
-const api = axios.create({
-  baseURL: process.env.NODE_ENV === 'production' 
-    ? 'https://blogbackend-4nz9.onrender.com/'  // Substitua pelo seu domínio no Render
-    : 'http://localhost:5000',
-  timeout: 10000,
-  headers: {
-    'Content-Type': 'application/json',
-    'Accept': 'application/json'
-  }
-});
-
-// Interceptor para logs
-api.interceptors.request.use(request => {
-  console.log('Requisição:', request.method.toUpperCase(), request.url);
-  return request;
-});
-
-api.interceptors.response.use(
-  response => {
-    console.log('Resposta:', response.status, response.data);
-    return response;
-  },
-  error => {
-    console.error('Erro na requisição:', error);
-    return Promise.reject(error);
-  }
-);
+import { getPosts } from './services/api';
 
 function App() {
   const [posts, setPosts] = useState([]);
@@ -44,51 +16,66 @@ function App() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
+  const [isConnected, setIsConnected] = useState(false);
 
-  const fetchPosts = async () => {
+  const checkServerConnection = async () => {
+    try {
+      const response = await api.get('/test');
+      console.log('Status do servidor:', response.data);
+      setIsConnected(true);
+      return true;
+    } catch (err) {
+      console.error('Erro ao verificar conexão com o servidor:', err);
+      setIsConnected(false);
+      return false;
+    }
+  };
+
+  const fetchPosts = async (page = 1) => {
     try {
       setLoading(true);
       setError(null);
-      const response = await api.get('/api/posts', {
-        params: {
-          page: currentPage,
-          search: searchQuery
+      
+      if (!isConnected) {
+        const connected = await checkServerConnection();
+        if (!connected) {
+          throw new Error('Não foi possível conectar ao servidor');
         }
-      });
-      setPosts(response.data.posts);
-      setTotalPages(response.data.pagination.pages);
-      return response.data.posts;
-    } catch (err) {
-      console.error('Erro detalhado:', err);
-      if (err.code === 'ECONNREFUSED') {
-        setError('Não foi possível conectar ao servidor. Verifique se o servidor está rodando.');
-      } else if (err.response) {
-        setError(err.response.data.error || 'Erro ao carregar posts. Por favor, tente novamente.');
-      } else {
-        setError('Erro ao carregar posts. Por favor, tente novamente.');
       }
-      return [];
+      
+      console.log('Tentando buscar posts...');
+      const response = await getPosts(page);
+      console.log('Resposta da API:', response);
+      
+      setPosts(response.posts);
+      setTotalPages(response.pagination.pages);
+      setCurrentPage(page);
+    } catch (err) {
+      console.error('Erro ao buscar posts:', err);
+      setError(err.message || 'Erro ao carregar posts. Por favor, tente novamente.');
+      setPosts([]);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    // Testa a conexão com o servidor
-    api.get('/test')
-      .then(() => {
-        console.log('Conexão com o servidor estabelecida');
-        fetchPosts();
-      })
-      .catch(err => {
-        console.error('Erro ao conectar com o servidor:', err);
-        setError('Não foi possível conectar ao servidor. Verifique se o servidor está rodando.');
-      });
+    console.log('Iniciando aplicação...');
+    console.log('Ambiente:', process.env.NODE_ENV);
+    
+    const initializeApp = async () => {
+      try {
+        await checkServerConnection();
+        await fetchPosts();
+        telegramAutoNotification.startChecking();
+      } catch (err) {
+        console.error('Erro ao inicializar aplicação:', err);
+        setError('Erro ao inicializar a aplicação. Por favor, tente novamente.');
+      }
+    };
 
-    // Inicia a verificação automática
-    telegramAutoNotification.startChecking(fetchPosts);
+    initializeApp();
 
-    // Limpa a verificação quando o componente é desmontado
     return () => {
       telegramAutoNotification.stopChecking();
     };
@@ -100,11 +87,16 @@ function App() {
   };
 
   const handlePageChange = (page) => {
-    setCurrentPage(page);
+    fetchPosts(page);
   };
 
   if (loading) {
-    return <LoadingSpinner />;
+    return (
+      <div className="loading-container">
+        <div className="loading-spinner"></div>
+        <p>Carregando posts...</p>
+      </div>
+    );
   }
 
   return (
@@ -114,7 +106,12 @@ function App() {
         <div className="content-wrapper">
           <AdSpace position="top" />
           {error ? (
-            <div className="error-message">{error}</div>
+            <div className="error-container">
+              <p className="error-message">{error}</p>
+              <button onClick={() => fetchPosts(currentPage)} className="retry-button">
+                Tentar Novamente
+              </button>
+            </div>
           ) : (
             <>
               <PostList 
