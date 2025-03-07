@@ -21,6 +21,7 @@ function App() {
 
   const checkServerConnection = async () => {
     try {
+      console.log('Verificando conexão com o servidor...');
       const response = await api.get('/test');
       console.log('Status do servidor:', response.data);
       setIsConnected(true);
@@ -38,9 +39,10 @@ function App() {
       setError(null);
       
       if (!isConnected) {
+        console.log('Tentando reconectar ao servidor...');
         const connected = await checkServerConnection();
         if (!connected) {
-          throw new Error('Não foi possível conectar ao servidor');
+          throw new Error('Não foi possível conectar ao servidor. Verifique se o backend está online.');
         }
       }
       
@@ -48,8 +50,12 @@ function App() {
       const response = await getPosts(page);
       console.log('Resposta da API:', response);
       
+      if (!response || !response.posts) {
+        throw new Error('Resposta inválida do servidor');
+      }
+
       setPosts(response.posts);
-      setTotalPages(response.pagination.pages);
+      setTotalPages(response.pagination?.pages || 1);
       setCurrentPage(page);
     } catch (err) {
       console.error('Erro ao buscar posts:', err);
@@ -63,12 +69,13 @@ function App() {
   useEffect(() => {
     console.log('Iniciando aplicação...');
     console.log('Ambiente:', process.env.NODE_ENV);
+    console.log('URL da API:', process.env.REACT_APP_API_URL || 'https://blogbackend-alj2.onrender.com');
     
     const initializeApp = async () => {
       try {
         await checkServerConnection();
         await fetchPosts();
-        telegramAutoNotification.startChecking();
+        await telegramAutoNotification.startChecking();
       } catch (err) {
         console.error('Erro ao inicializar aplicação:', err);
         setError('Erro ao inicializar a aplicação. Por favor, tente novamente.');
@@ -101,7 +108,7 @@ function App() {
   }
 
   return (
-    <Router basename={window.basename}>
+    <Router>
       <div className="App">
         <Header onSearch={handleSearch} />
         <main className="main-content">
