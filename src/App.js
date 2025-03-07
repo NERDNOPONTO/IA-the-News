@@ -99,7 +99,7 @@ function App() {
   }
 
   return (
-    <Router>
+    <Router basename="/IA-the-News">
       <div className="App">
         <Header onSearch={handleSearch} />
         <main className="main-content">
